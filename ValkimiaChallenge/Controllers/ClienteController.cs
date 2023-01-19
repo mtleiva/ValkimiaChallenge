@@ -29,7 +29,7 @@ namespace ValkimiaChallenge.Controllers
 
             var data = JsonConvert.DeserializeObject<dynamic>(optData.ToString());
             string user = data.Email.ToString();
-            string password = data.Password.ToString;
+            string password = data.Password.ToString();
             Cliente cliente = new Cliente() { 
                 Id=1, 
                 Nombre= "tomas",
