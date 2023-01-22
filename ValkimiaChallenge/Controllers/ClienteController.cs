@@ -40,6 +40,7 @@ namespace ValkimiaChallenge.Controllers
             };
 
             if (user == null) {
+                //BBDD
                 return new
                 {
                     success = false,
@@ -99,6 +100,11 @@ namespace ValkimiaChallenge.Controllers
         [Route("eliminar")]
         public dynamic EliminarCliente(string id)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var rToken = Jwt.Validartoken(identity);
+            if (!rToken.success) return rToken;
+
+
             string token = Request.Headers.Where(x => x.Key == "Authorization").FirstOrDefault().Value;
             if (token == "root") {
                 return "Deleted";
