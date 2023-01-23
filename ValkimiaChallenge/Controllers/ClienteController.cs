@@ -122,12 +122,19 @@ namespace ValkimiaChallenge.Controllers
 
         [HttpPost]
         [Route("guardar")]
-        public dynamic GuardarCliente(Cliente cliente)
+        public dynamic GuardarCliente(ClienteDTO cliente)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            cliente.Id = 1;
-            return "guardado";
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                var cs = new ClienteService(_context);
+                cs.SetCliente(cliente);
+                return "guardado";
+            }
+            catch(Exception ex)
+            {
+                return "Error";
+            }
 
         }
         [HttpPost]

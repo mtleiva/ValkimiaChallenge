@@ -55,7 +55,29 @@ namespace ValkimiaChallenge.DataService
             }
         }
 
+        public void SetCliente(ClienteDTO clienteDTO)
+        {
+            try
+            {
 
+                Cliente newCliente = new Cliente();
+                newCliente.Nombre = clienteDTO.Nombre;
+                newCliente.Apellido = clienteDTO.Apellido;
+                newCliente.Domicilio = clienteDTO.Domicilio;
+                newCliente.Email = clienteDTO.Email;
+                newCliente.Password = clienteDTO.Password;
+                newCliente.CuidadId = clienteDTO.CuidadId;
+                _context.Add(newCliente);
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new ApplicationException("Error cargando Cliente");
+            }
+
+        }
 
         public bool DeleteCliente(int id)
         {
@@ -74,6 +96,19 @@ namespace ValkimiaChallenge.DataService
                 return false;
             }
         }
+
+
+        //public Cliente GetClienteModel(ClienteDTO clienteDTO)
+        //{
+        //    Cliente newCliente = new Cliente();
+        //    newCliente.Nombre = clienteDTO.Nombre;
+        //    newCliente.Apellido = clienteDTO.Apellido;
+        //    newCliente.Domicilio = clienteDTO.Domicilio;
+        //    newCliente.Email = clienteDTO.Email;
+        //    newCliente.Password = clienteDTO.Password;
+        //    newCliente.CuidadId = clienteDTO.CuidadId;
+        //    return newCliente;
+        //}
 
 
     }
