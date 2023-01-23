@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ValkimiaChallenge.DataService;
 
 namespace ValkimiaChallenge.Models
 {
@@ -10,7 +11,7 @@ namespace ValkimiaChallenge.Models
         public string Subject { get; set; }
 
 
-        public static dynamic Validartoken(ClaimsIdentity identity)
+        public static dynamic Validartoken(ClaimsIdentity identity, FacturasContext context)
         {
 
             try
@@ -26,14 +27,10 @@ namespace ValkimiaChallenge.Models
                 }
 
                 var id = identity.Claims.FirstOrDefault(x => x.Type == "id").Value;
-                //BBDD
-                // Cliente cliente = context.Cliente.Where(client=> client.id = id).FirstOrDefault();
+               
+                Cliente cliente = new ClienteService(context).GetCliente(int.Parse(id));
 
-                Cliente cliente = new Cliente()
-                {
-                    Id = Int32.Parse(id)
 
-                };
                 return new
                 {
                     success = true,

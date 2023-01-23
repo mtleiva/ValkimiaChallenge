@@ -33,15 +33,7 @@ namespace ValkimiaChallenge.Controllers
             var data = JsonConvert.DeserializeObject<dynamic>(optData.ToString());
             string emailCliente = data.Email.ToString();
             string password = data.Password.ToString();
-            //Cliente cliente = new Cliente() { 
-            //    Id=1, 
-            //    Nombre= "tomas",
-            //    Apellido = "asdasd",
-            //    Domicilio = "asdasd",
-            //    Email = "asdasd",
-            //    Password = "asdasd",
-            //};
-            var cliente = new ClientService(_context).Login(emailCliente, password);
+            var cliente = new ClienteService(_context).Login(emailCliente, password);
             if (cliente == null) {
                 //BBDD
                 return new
@@ -62,7 +54,6 @@ namespace ValkimiaChallenge.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var token = new JwtSecurityToken(jwt.Issuer, jwt.Auudience, claims, signingCredentials: signIn);
             return new { 
                     success = true,
@@ -77,16 +68,55 @@ namespace ValkimiaChallenge.Controllers
         [Route("cliente")]
         public dynamic GetCliente(string id)
         {
-            return new Cliente() { Nombre="tomas"};
+
+
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                //var rToken = Jwt.Validartoken(identity, _context);
+                //if (!rToken.success) return rToken;
+                //string token = Request.Headers.Where(x => x.Key == "Authorization").FirstOrDefault().Value;
+                //if (token != null) {
+                var cs = new ClienteService(_context);
+                int idCliente = Int32.Parse(GetNumbers(id));
+                var result = cs.GetCliente(idCliente);
+                if (result!= null)
+                {
+                    return result;
+                }
+                //}
+                return "Error";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
 
         }
         [HttpGet]
         [Route("clientes")]
         public dynamic GetClientes()
         {
-            List<Cliente> clientes = new List<Cliente>();
-            clientes.Add(new Cliente() { Nombre = "tomas" });
-            return clientes;
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                //var rToken = Jwt.Validartoken(identity, _context);
+                //if (!rToken.success) return rToken;
+                //string token = Request.Headers.Where(x => x.Key == "Authorization").FirstOrDefault().Value;
+                //if (token != null) {
+                var cs = new ClienteService(_context);
+                var result = cs.GetClientes();
+                if (result != null)
+                {
+                    return result;
+                }
+                //}
+                return "Error";
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
 
         }
 
@@ -94,6 +124,7 @@ namespace ValkimiaChallenge.Controllers
         [Route("guardar")]
         public dynamic GuardarCliente(Cliente cliente)
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
 
             cliente.Id = 1;
             return "guardado";
@@ -103,19 +134,31 @@ namespace ValkimiaChallenge.Controllers
         [Route("eliminar")]
         public dynamic EliminarCliente(string id)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var rToken = Jwt.Validartoken(identity);
-            if (!rToken.success) return rToken;
-
-
-            string token = Request.Headers.Where(x => x.Key == "Authorization").FirstOrDefault().Value;
-            if (token == "root") {
-                return "Deleted";
-            
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                //var rToken = Jwt.Validartoken(identity, _context);
+                //if (!rToken.success) return rToken;
+                //string token = Request.Headers.Where(x => x.Key == "Authorization").FirstOrDefault().Value;
+                //if (token != null) {
+                var cs = new ClienteService(_context);
+                int idCliente = Int32.Parse(GetNumbers(id));
+                bool result = cs.DeleteCliente(idCliente);
+                if (result)
+                {
+                    return "Deleted";
+                }
+                //}
+                return "Error";
             }
-
-            return "Error";
-
+            catch(Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
+        private static string GetNumbers(string input)
+        {
+            return new string(input.Where(c => char.IsDigit(c)).ToArray());
         }
     }
 }
