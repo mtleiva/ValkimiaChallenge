@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ValkimiaChallenge.DataService;
 using ValkimiaChallenge.Models;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -16,9 +17,11 @@ namespace ValkimiaChallenge.Controllers
     {
 
         public IConfiguration _configuration { get; set; }
+        private FacturasContext _context { get; set; }
 
-        public ClienteController(IConfiguration configuration) { 
+        public ClienteController(IConfiguration configuration, FacturasContext facturasContext) { 
             _configuration = configuration;
+            _context = facturasContext;
         }
 
 
@@ -28,18 +31,18 @@ namespace ValkimiaChallenge.Controllers
         public dynamic login([FromBody] Object optData){
 
             var data = JsonConvert.DeserializeObject<dynamic>(optData.ToString());
-            string user = data.Email.ToString();
+            string emailCliente = data.Email.ToString();
             string password = data.Password.ToString();
-            Cliente cliente = new Cliente() { 
-                Id=1, 
-                Nombre= "tomas",
-                Apellido = "asdasd",
-                Domicilio = "asdasd",
-                Email = "asdasd",
-                Password = "asdasd",
-            };
-
-            if (user == null) {
+            //Cliente cliente = new Cliente() { 
+            //    Id=1, 
+            //    Nombre= "tomas",
+            //    Apellido = "asdasd",
+            //    Domicilio = "asdasd",
+            //    Email = "asdasd",
+            //    Password = "asdasd",
+            //};
+            var cliente = new ClientService(_context).Login(emailCliente, password);
+            if (cliente == null) {
                 //BBDD
                 return new
                 {
